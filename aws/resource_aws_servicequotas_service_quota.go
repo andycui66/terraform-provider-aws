@@ -20,10 +20,26 @@ func resourceAwsServiceQuotasServiceQuota() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"adjustable": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"arn": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"default_value": {
+				Type:     schema.TypeFloat,
+				Computed: true,
+			},
 			"quota_code": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+			},
+			"quota_name": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"request_id": {
 				Type:     schema.TypeString,
@@ -37,6 +53,10 @@ func resourceAwsServiceQuotasServiceQuota() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+			},
+			"service_name": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"value": {
 				Type:     schema.TypeFloat,
@@ -118,8 +138,28 @@ func resourceAwsServiceQuotasServiceQuotaRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("error getting Service Quotas Service Quota (%s): empty result", d.Id())
 	}
 
+	defaultInput := &servicequotas.GetAWSDefaultServiceQuotaInput{
+		QuotaCode:   aws.String(quotaCode),
+		ServiceCode: aws.String(serviceCode),
+	}
+
+	defaultOutput, err := conn.GetAWSDefaultServiceQuota(defaultInput)
+
+	if err != nil {
+		return fmt.Errorf("error getting Service Quotas Default Service Quota (%s): %s", d.Id(), err)
+	}
+
+	if output == nil {
+		return fmt.Errorf("error getting Service Quotas Default Service Quota (%s): empty result", d.Id())
+	}
+
+	d.Set("adjustable", output.Quota.Adjustable)
+	d.Set("arn", output.Quota.QuotaArn)
+	d.Set("default_value", defaultOutput.Quota.Value)
 	d.Set("quota_code", output.Quota.QuotaCode)
+	d.Set("quota_name", output.Quota.QuotaName)
 	d.Set("service_code", output.Quota.ServiceCode)
+	d.Set("service_name", output.Quota.ServiceName)
 	d.Set("value", output.Quota.Value)
 
 	if requestID != "" {

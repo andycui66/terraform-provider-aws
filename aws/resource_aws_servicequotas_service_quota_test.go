@@ -20,8 +20,13 @@ func TestAccAwsServiceQuotasServiceQuota_basic(t *testing.T) {
 			{
 				Config: testAccAwsServiceQuotasServiceQuotaConfig(),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "adjustable", "true"),
+					testAccCheckResourceAttrRegionalARN(resourceName, "arn", "servicequotas", "vpc/L-F678F1CE"),
+					resource.TestCheckResourceAttr(resourceName, "default_value", "5"),
 					resource.TestCheckResourceAttr(resourceName, "quota_code", "L-F678F1CE"),
+					resource.TestCheckResourceAttr(resourceName, "quota_name", "VPCs per Region"),
 					resource.TestCheckResourceAttr(resourceName, "service_code", "vpc"),
+					resource.TestCheckResourceAttr(resourceName, "service_name", "Amazon Virtual Private Cloud (Amazon VPC)"),
 					resource.TestCheckResourceAttr(resourceName, "value", "75"),
 				),
 			},

@@ -30,7 +30,14 @@ The following arguments are supported:
 
 ## Attribute Reference
 
+In addition to all arguments above, the following attributes are exported:
+
+* `adjustable` - Whether the service quota can be increased.
+* `arn` - Amazon Resource Name (ARN) of the service quota.
+* `default_value` - Default value of the service quota.
 * `id` - Service code and quota code, separated by a front slash (`/`)
+* `quota_name` - Name of the quota.
+* `service_name` - Name of the service.
 
 ## Import
 
